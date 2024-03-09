@@ -57,6 +57,7 @@ const BookCards = ({ headline, books }) => {
                                     </div>
                                 </div>
                                 <div>
+                        
                                     <div>
                                     <h3>{book.bookTitle}</h3>
                                     <p>{book.authorName}</p>
