@@ -34,10 +34,34 @@ const UploadBook = () => {
 
   //handle book submision
   const handleBooksubmit = (event) => {
-    event.preventdefault();
+    event.preventDefault();
     const form = event.target;
+    const bookTitle = form.bookTitle.value;
+    const authorname = form.authorname.value;
+    const imageURL = form.imageURL.value;
+    const category = form.categoryName.value;
+    const bookDescription = form.bookDescription.value;
+    const bookPDF = form.bookPDF.value;
 
-    
+    const bookObj = {
+      bookTitle, authorname, imageURL, category, bookDescription, bookPDF
+    }
+
+    console.log(bookObj)
+
+    //send data to db
+    fetch('http://localhost:5000/upload-book', {
+      method: 'POST',
+      headers: {
+        "Content-type": "application/json"
+      },
+      body: JSON.stringify(bookObj)
+    }).then(res => res.json()).then(data => {
+      // console.log(data)
+      alert("Book uploaded successfully!!!")
+      form.reset()
+    })
+
   }
 
   return (
@@ -104,8 +128,8 @@ const UploadBook = () => {
           <div className="mb-2 block">
             <Label htmlFor="bookPDF" value="Book PDF" />
           </div>
-          <TextInput id="bookPDF" type="text" 
-          name ='bookPDF' placeholder="Book PDF URL" required />
+          <TextInput id="bookPDF" type="text"
+            name='bookPDF' placeholder="Book PDF URL" required />
         </div>
 
         <Button type="submit" className='mt-5'>Upload Book</Button>
