@@ -15,6 +15,9 @@ import UploadBook from "../dashboard/UploadBook";
 import ManageBooks from "../dashboard/ManageBooks";
 import EditBooks from "../dashboard/EditBooks";
 import Signup from "../components/Signup";
+import Login from "../components/Login";
+import PrivateRoute from "../PrivateRoute/PrivateRoute";
+import Logout from "../components/Logout";
 
 const router = createBrowserRouter([
     {
@@ -39,37 +42,45 @@ const router = createBrowserRouter([
             },
             {
                 path: '/book/:id',
-                element: <SingleBook/>,
-                loader: ({params}) => fetch(`http://localhost:5000/book/${params.id}`)
+                element: <SingleBook />,
+                loader: ({ params }) => fetch(`http://localhost:5000/book/${params.id}`)
             }
         ]
     },
     {
         path: '/admin/dashboard',
-        element:<DashboardLayout/>,
-        children:[
+        element: <DashboardLayout />,
+        children: [
             {
                 path: '/admin/dashboard',
-                element: <Dashboard/>
+                element: <PrivateRoute><Dashboard /></PrivateRoute>
             },
             {
                 path: '/admin/dashboard/upload',
-                element: <UploadBook/>
+                element: <UploadBook />
             },
             {
                 path: '/admin/dashboard/manage',
-                element: <ManageBooks/>
+                element: <ManageBooks />
             },
             {
                 path: '/admin/dashboard/edit-books/:id',
-                element: <EditBooks/>,
-                loader : ({params}) => fetch(`http://localhost:5000/book/${params.id}`)
+                element: <EditBooks />,
+                loader: ({ params }) => fetch(`http://localhost:5000/book/${params.id}`)
             }
         ]
     },
     {
         path: "sign-up",
-        element: <Signup/>
+        element: <Signup />
+    },
+    {
+        path: 'login',
+        element: <Login />
+    },
+    {
+        path: 'logout',
+        element: <Logout />
     }
 ]);
 
