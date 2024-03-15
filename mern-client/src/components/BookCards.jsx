@@ -59,11 +59,11 @@ const BookCards = ({ headline, books }) => {
                                 <div>
                         
                                     <div>
-                                    <h3>{book.bookTitle}</h3>
+                                    <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{book.bookTitle.length > 20 ? `${book.bookTitle.slice(0, 20)}...` : book.bookTitle}</h3>
                                     <p>{book.authorName}</p>
                                     </div>
-                                    <div>
-                                        <p>$10.00</p>
+                                    <div className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                                        <p>Price - Rs.{book.price}</p>
                                     </div>
                                 </div>
                             </Link>
