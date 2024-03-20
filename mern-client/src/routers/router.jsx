@@ -18,6 +18,7 @@ import Signup from "../components/Signup";
 import Login from "../components/Login";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import Logout from "../components/Logout";
+import Cart from "../shop/Cart";
 
 const router = createBrowserRouter([
     {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
                 path: '/book/:id',
                 element: <SingleBook />,
                 loader: ({ params }) => fetch(`http://localhost:5000/book/${params.id}`)
+            },
+            {
+                path: '/cart',
+                element: <Cart />
             }
         ]
     },
