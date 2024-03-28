@@ -19,6 +19,9 @@ import Login from "../components/Login";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import Logout from "../components/Logout";
 import Cart from "../shop/Cart";
+import Payment from "../shop/Payment";
+import Sucess from "../components/Sucess";
+import Cancel from "../components/Cancel";
 
 const router = createBrowserRouter([
     {
@@ -31,7 +34,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/shop',
-                element: <Shop />
+                element: <PrivateRoute><Shop /></PrivateRoute>
             },
             {
                 path: '/about',
@@ -49,6 +52,18 @@ const router = createBrowserRouter([
             {
                 path: '/cart',
                 element: <Cart />
+            },
+            {
+                path: '/payment',
+                element: <Payment />
+            },
+            {
+                path: '/sucess',
+                element: <Sucess />
+            },
+            {
+                path: '/cancel',
+                element: <Cancel />
             }
         ]
     },

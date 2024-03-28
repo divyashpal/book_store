@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 5000;
 const cors = require('cors')
+const stripe = require("stripe")("sk_test_51Ox301SJZ7HGVRik2prd19IDLE7lgiFrb8rzJl6Sqe1o6ipMeypIUaLjnlNzYSd1ZgGJRSB52ly3FCea0eSgwuns005pewmhzK")
+
 
 
 //middleware
@@ -10,6 +12,31 @@ app.use(express.json());
 
 //password - Bookstore0001
 
+
+//Endpoint to create a payment intent
+app.post("/create-checkout-session", async (req, res) => {
+    const products = req.body.products;
+    
+    const lineItems = products.map((product)=>({
+        price_data:{
+            currency:"inr",
+            product_data:{
+                name:product.bookTitle
+            },
+            unit_amount:product.price * 100,
+        },
+        quantity:product.quantity
+    }));
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types:["card"],
+        line_items:lineItems,
+        mode:"payment",
+        success_url:"http://localhost:5173/sucess",
+        cancel_url:"http://localhost:5173/cancel"
+    });
+
+    res.json({id:session.id})
+})
 
 app.get('/', (req, res) => {
     res.send('Hello')
@@ -55,8 +82,11 @@ async function run() {
                 return res.status(404).send("Book not found");
             }
 
+            // Add quantity property to the book object with an initial value of 1
+            const itemToAdd = { ...book, quantity: 1 };
+
             // Add book to the cart collection
-            const result = await cartCollection.insertOne(book);
+            const result = await cartCollection.insertOne(itemToAdd);
             res.send(result);
         });
 
@@ -66,16 +96,95 @@ async function run() {
             res.send(items);
         });
 
+        // Change quantity of item in cart
+        // app.put("/change-quantity/:id", async (req, res) => {
+        //     const bookId = req.params.id;
+        //     const { quantityChange } = req.body;
+
+        //     // Ensure quantityChange is a valid number
+        //     if (typeof quantityChange !== "number") {
+        //         return res.status(400).json("Invalid quantity change");
+        //     }
+
+        //     try {
+        //         // Find the item in the cart
+        //         const item = await cartCollection.findOne({ _id: new ObjectId(bookId) });
+        //         if (!item) {
+        //             return res.status(404).json("Item not found in the cart");
+        //         }
+
+        //         // Update the quantity of the item
+        //         const updatedQuantity = item.quantity + quantityChange;
+        //         if (updatedQuantity < 1) {
+        //             // If the updated quantity is less than 1, remove the item from the cart
+        //             await cartCollection.deleteOne({ _id: new ObjectId(bookId) });
+        //             return res.status(200).json("Item removed from cart");
+        //         } else {
+        //             // Otherwise, update the quantity and total price of the item
+        //             const updatedTotalPrice = item.price * updatedQuantity;
+        //             const result = await cartCollection.findOneAndUpdate(
+        //                 { _id: new ObjectId(bookId) },
+        //                 { $set: { quantity: updatedQuantity, totalPrice: updatedTotalPrice } },
+        //                 { returnOriginal: false }
+        //             );
+        //             return res.status(200).json(result.value);
+        //         }
+        //     } catch (error) {
+        //         console.error("Error changing quantity:", error);
+        //         return res.status(500).json("Failed to change quantity");
+        //     }
+        // });
+
+        // Change quantity of item in cart
+        // Change quantity of item in cart
+        app.put("/change-quantity/:id", async (req, res) => {
+            const bookId = req.params.id;
+            const { quantityChange } = req.body;
+
+            // Ensure quantityChange is a valid number
+            if (typeof quantityChange !== "number") {
+                return res.status(400).json({ message: "Invalid quantity change" });
+            }
+
+            try {
+                // Find the item in the cart
+                const item = await cartCollection.findOne({ _id: new ObjectId(bookId) });
+                if (!item) {
+                    return res.status(404).json({ message: "Item not found in the cart" });
+                }
+
+                // Update the quantity of the item
+                const updatedQuantity = item.quantity + quantityChange;
+                if (updatedQuantity < 1) {
+                    // If the updated quantity is less than 1, remove the item from the cart
+                    await cartCollection.deleteOne({ _id: new ObjectId(bookId) });
+                    return res.status(200).json({ message: "Item removed from cart" }); // Return a JSON object here
+                } else {
+                    // Otherwise, update the quantity and total price of the item
+                    const updatedTotalPrice = item.price * updatedQuantity;
+                    const result = await cartCollection.findOneAndUpdate(
+                        { _id: new ObjectId(bookId) },
+                        { $set: { quantity: updatedQuantity, totalPrice: updatedTotalPrice } },
+                        { returnOriginal: false }
+                    );
+                    //console.log(result);
+                    return res.status(200).json(result); // Return a JSON object here
+                }
+            } catch (error) {
+                console.error("Error changing quantity:", error);
+                return res.status(500).json({ message: "Failed to change quantity" }); // Return a JSON object here
+            }
+        });
+
         // Remove item from cart
         app.delete("/remove-from-cart/:id", async (req, res) => {
             const bookId = req.params.id;
             const result = await cartCollection.deleteOne({ _id: new ObjectId(bookId) });
 
             if (result.deletedCount === 0) {
-                return res.status(404).json({error: "Book not found in the cart"});
+                return res.status(404).json({ error: "Book not found in the cart" });
             }
-
-            res.json({message: "Book removed from cart"});
+            res.json({ message: "Book removed from cart" });
         });
 
         //get all books from database
@@ -102,6 +211,7 @@ async function run() {
             const result = await bookCollections.updateOne(filter, updateDoc, options);
             res.send(result);
         })
+
 
         //delete a book data
         app.delete("/book/:id", async (req, res) => {
