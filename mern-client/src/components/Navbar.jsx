@@ -57,7 +57,7 @@ const Navbar = () => {
             <nav className={`py-4 lg:px-24 px-4 ${isSticky? "sticky top-0 left-0 right-0 bg-blue-300" : ""}`}>
                 <div className='flex justify-between items-center text-base gap-8'>
                     {/*logo */}
-                    <Link to="/" className='text-2xl font-bold text-blue-700 flex items-center'><FaBlog className='inline-block' />Books</Link>
+                    <Link to="/" className='text-2xl font-bold text-blue-700 flex items-center'><FaBlog className='inline-block' />Chapters & Verse</Link>
 
                     {/* nav items for large devices */}
                     <ul className='md:flex space-x-12 hidden'>
