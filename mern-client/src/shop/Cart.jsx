@@ -6,7 +6,7 @@ import {loadStripe} from '@stripe/stripe-js';
 const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
-    const [key, setKey] = useState(0); // Add key state
+    //const [key, setKey] = useState(0); // Add key state
     const navigate = useNavigate(); // Initialize navigate function
     const [totalBooks, setTotalBooks] = useState(0); // Add state for totalBooks
     const [totalPrice, setTotalPrice] = useState(0); // Add state for totalPrice
@@ -184,7 +184,7 @@ const Cart = () => {
                 <p className="font-semibold">Total Books: {totalBooks}</p>
                 <p className="font-semibold">Total Price: Rs.{totalPrice}</p>
             </div>
-            <button onClick={makePayment} className="mt-5 bg-blue-700 text-white text-xl px-6 py-4 rounded hover:bg-blue-800">Checkout</button>
+            <button onClick={makePayment} disabled={cartItems.length === 0} className="mt-5 bg-blue-700 text-white text-xl px-6 py-4 rounded hover:bg-blue-800 ">Checkout</button>
         </div>
     );
 };

@@ -22,6 +22,7 @@ import Cart from "../shop/Cart";
 import Payment from "../shop/Payment";
 import Sucess from "../components/Sucess";
 import Cancel from "../components/Cancel";
+import UserUpload from "../components/UserUpload";
 
 const router = createBrowserRouter([
     {
@@ -41,8 +42,8 @@ const router = createBrowserRouter([
                 element: <About />
             },
             {
-                path: '/blog',
-                element: <Blog />
+                path: '/userupload',
+                element: <PrivateRoute><UserUpload /></PrivateRoute>
             },
             {
                 path: '/book/:id',
@@ -73,7 +74,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/admin/dashboard',
-                element: <PrivateRoute><Dashboard /></PrivateRoute>
+                element: <PrivateRoute><UploadBook /></PrivateRoute>
             },
             {
                 path: '/admin/dashboard/upload',

@@ -46,10 +46,16 @@ const Navbar = () => {
             link: "Shop", path: "/shop"
         },
         {
-            link: "Sell Your Book", path: "/admin/dashboard"
+            link: "Sell Your Book", path: "/userupload"
         },
         {
-            link: "Blog", path: "/blog"
+            link: "Admin", path: "/admin/dashboard"
+        },
+        {
+            link: "login", path:"login"
+        },
+        {
+            link: "logout", path:"logout"
         }
     ]
     return (

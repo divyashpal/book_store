@@ -5,7 +5,7 @@ import googleLogo from "../assets/google-logo.svg";
 
 const Signup = () => {
     const {createUser, loginwithGoogle} = useContext(AuthContext);
-    const [error,setError] = useState("error");
+    const [error,setError] = useState(null);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -28,8 +28,11 @@ const Signup = () => {
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            setError(errorMessage)
-            // ..
+            if(errorCode === 'auth/email-already-in-use'){
+                setError("User already exists. Please login")
+            }else{
+                setError(errorMessage)
+            }
           });
     }
 
@@ -68,6 +71,7 @@ const Signup = () => {
                                     <input id="password" name="password" type="password" className="peer h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600"placeholder="Password" />
                                     
                                 </div>
+                                {error && <p className="text-red-500">{error}</p>} {/* Display error message if exists */}
                                 <p>
                                     If you have an account. Please <Link to='/login' className='text-blue-700 underline'>Login</Link> Here
                                 </p>

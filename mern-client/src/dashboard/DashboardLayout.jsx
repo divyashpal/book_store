@@ -1,6 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import SideBar from './SideBar.jsx'
+import UploadBook from './UploadBook.jsx'
 
 const DashboardLayout = () => {
   return (
