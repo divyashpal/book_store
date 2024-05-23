@@ -3,12 +3,15 @@ const app = express()
 const port = process.env.PORT || 5000;
 const cors = require('cors')
 const stripe = require("stripe")("sk_test_51Ox301SJZ7HGVRik2prd19IDLE7lgiFrb8rzJl6Sqe1o6ipMeypIUaLjnlNzYSd1ZgGJRSB52ly3FCea0eSgwuns005pewmhzK")
-
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 //middleware
 app.use(cors());
 app.use(express.json());
+
+const SECRET_KEY = "your_secret_key";
 
 //password - Bookstore0001
 
@@ -62,9 +65,76 @@ async function run() {
         await client.connect();
 
         // create a collection of documents
+        const userCollection = client.db("BookInventory").collection("users");
         const bookCollections = client.db("BookInventory").collection("books");
         const cartCollection = client.db("BookInventory").collection("cart"); // New collection for the cart
 
+        // Admin Registration route
+        app.post('/register', async (req, res) => {
+            const { username, password } = req.body;
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            const user = {
+                username,
+                password: hashedPassword
+            };
+
+            try {
+                const result = await userCollection.insertOne(user);
+                res.status(201).json({ message: "User registered successfully", userId: result.insertedId });
+            } catch (error) {
+                res.status(500).json({ message: "Error registering user", error });
+            }
+        });
+
+        // Login route
+        app.post('/login', async (req, res) => {
+            const { username, password } = req.body;
+
+            try {
+                const user = await userCollection.findOne({ username });
+
+                if (!user) {
+                    return res.status(404).json({ message: "User not found" });
+                }
+
+                const isPasswordValid = await bcrypt.compare(password, user.password);
+
+                if (!isPasswordValid) {
+                    return res.status(401).json({ message: "Invalid password" });
+                }
+
+                const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: '1h' });
+
+                res.status(200).json({ message: "Login successful", token });
+            } catch (error) {
+                res.status(500).json({ message: "Error logging in", error });
+                console.log(error);
+            }
+        });
+
+        // Middleware to protect routes
+        function authenticateToken(req, res, next) {
+            const token = req.headers['authorization'];
+
+            if (!token) {
+                return res.status(401).json({ message: "Access token required" });
+            }
+
+            jwt.verify(token, SECRET_KEY, (err, user) => {
+                if (err) {
+                    return res.status(403).json({ message: "Invalid token" });
+                }
+
+                req.user = user;
+                next();
+            });
+        }
+
+        // Example of a protected route
+        app.get('/protected', authenticateToken, (req, res) => {
+            res.status(200).json({ message: "This is a protected route" });
+        });
 
         //insert a book 
         app.post("/upload-book", async (req, res) => {
@@ -96,47 +166,7 @@ async function run() {
             res.send(items);
         });
 
-        // Change quantity of item in cart
-        // app.put("/change-quantity/:id", async (req, res) => {
-        //     const bookId = req.params.id;
-        //     const { quantityChange } = req.body;
-
-        //     // Ensure quantityChange is a valid number
-        //     if (typeof quantityChange !== "number") {
-        //         return res.status(400).json("Invalid quantity change");
-        //     }
-
-        //     try {
-        //         // Find the item in the cart
-        //         const item = await cartCollection.findOne({ _id: new ObjectId(bookId) });
-        //         if (!item) {
-        //             return res.status(404).json("Item not found in the cart");
-        //         }
-
-        //         // Update the quantity of the item
-        //         const updatedQuantity = item.quantity + quantityChange;
-        //         if (updatedQuantity < 1) {
-        //             // If the updated quantity is less than 1, remove the item from the cart
-        //             await cartCollection.deleteOne({ _id: new ObjectId(bookId) });
-        //             return res.status(200).json("Item removed from cart");
-        //         } else {
-        //             // Otherwise, update the quantity and total price of the item
-        //             const updatedTotalPrice = item.price * updatedQuantity;
-        //             const result = await cartCollection.findOneAndUpdate(
-        //                 { _id: new ObjectId(bookId) },
-        //                 { $set: { quantity: updatedQuantity, totalPrice: updatedTotalPrice } },
-        //                 { returnOriginal: false }
-        //             );
-        //             return res.status(200).json(result.value);
-        //         }
-        //     } catch (error) {
-        //         console.error("Error changing quantity:", error);
-        //         return res.status(500).json("Failed to change quantity");
-        //     }
-        // });
-
-        // Change quantity of item in cart
-        // Change quantity of item in cart
+        
         app.put("/change-quantity/:id", async (req, res) => {
             const bookId = req.params.id;
             const { quantityChange } = req.body;

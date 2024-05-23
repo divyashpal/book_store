@@ -6,6 +6,7 @@ import { FaBarsStaggered, FaBlog, FaXmark } from "react-icons/fa6";
 import { AuthContext } from '../contects/AuthProvider';
 
 
+
 const Navbar = () => {
     const [isMenuOpen, setisMenuOpen] = useState(false);
     const [isSticky, setisSticky] = useState(false);
@@ -49,7 +50,7 @@ const Navbar = () => {
             link: "Sell Your Book", path: "/userupload"
         },
         {
-            link: "Admin", path: "/admin/dashboard"
+            link: "Admin", path: "/adminlogin"
         },
         {
             link: "login", path:"login"

@@ -24,6 +24,10 @@ import Sucess from "../components/Sucess";
 import Cancel from "../components/Cancel";
 import UserUpload from "../components/UserUpload";
 
+import AdminSignup from "../components/AdminSignup";
+import AddLogin from "../components/AddLogin";
+
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -47,7 +51,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/book/:id',
-                element: <SingleBook />,
+                element: <PrivateRoute><SingleBook /></PrivateRoute>,
                 loader: ({ params }) => fetch(`http://localhost:5000/book/${params.id}`)
             },
             {
@@ -74,7 +78,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: '/admin/dashboard',
-                element: <PrivateRoute><UploadBook /></PrivateRoute>
+                element: <UploadBook />
             },
             {
                 path: '/admin/dashboard/upload',
@@ -102,6 +106,14 @@ const router = createBrowserRouter([
     {
         path: 'logout',
         element: <Logout />
+    },
+    {
+        path:'adminsignup',
+        element: <AdminSignup/>
+    },
+    {
+        path: 'adminlogin',
+        element: <AddLogin/>
     }
 ]);
 
