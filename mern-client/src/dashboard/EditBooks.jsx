@@ -5,7 +5,7 @@ import { useLoaderData, useParams } from 'react-router-dom';
 
 const EditBooks = () => {
   const { id } = useParams();
-  const { bookTitle, authorname, imageURL, category, bookDescription, bookPDF } = useLoaderData();
+  const { bookTitle, authorname, imageURL, category, bookDescription, bookPDF, quantity } = useLoaderData();
 
 
   const bookCategories = [
@@ -29,11 +29,16 @@ const EditBooks = () => {
   ]
 
   const [selectedBookCategory, setselectedBookCategory] = useState(bookCategories[0]);
+  const [bookQuantity, setBookQuantity] = useState(quantity);
 
   const handleChangeSelectedValue = (event) => {
     // console.log(event.target.value);
     setselectedBookCategory(event.target.value)
   }
+
+  const handleQuantityChange = (event) => {
+    setBookQuantity(event.target.value);
+  };
 
 
   //handle book submision
@@ -46,17 +51,18 @@ const EditBooks = () => {
     const category = form.categoryName.value;
     const bookDescription = form.bookDescription.value;
     const bookPDF = form.bookPDF.value;
+    const quantity = form.quantity.value;
 
     const updatebookObj = {
-      bookTitle, authorname, imageURL, category, bookDescription, bookPDF
+      bookTitle, authorname, imageURL, category, bookDescription, bookPDF, quantity
     }
 
     //console.log(bookObj)
     //update book data
-    fetch(`http://localhost:5000/book/${id}`,{
-      method:'PATCH',
-      headers:{
-        "Content-type":"application/json"
+    fetch(`http://localhost:5000/book/${id}`, {
+      method: 'PATCH',
+      headers: {
+        "Content-type": "application/json"
       },
       body: JSON.stringify(updatebookObj)
     }).then(res => res.json()).then(data => {
@@ -118,6 +124,17 @@ const EditBooks = () => {
           </div>
         </div>
 
+        {/* third row */}
+        <div className='flex gap-8'>
+          {/* Quantity */}
+          <div className='lg:w-1/2'>
+            <div className="mb-2 block">
+              <Label htmlFor="quantity" value="Quantity" />
+            </div>
+            <TextInput id="quantity" name="quantity" type="number" placeholder="Quantity" required defaultValue={bookQuantity} onChange={handleQuantityChange} />
+          </div>
+        </div>
+        
         {/* bookDescription */}
         <div>
           <div className="mb-2 block">

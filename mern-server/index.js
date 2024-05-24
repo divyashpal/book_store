@@ -5,12 +5,15 @@ const cors = require('cors')
 const stripe = require("stripe")("sk_test_51Ox301SJZ7HGVRik2prd19IDLE7lgiFrb8rzJl6Sqe1o6ipMeypIUaLjnlNzYSd1ZgGJRSB52ly3FCea0eSgwuns005pewmhzK")
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
 
 
 //middleware
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.raw({ type: 'application/json' }));
 
+const endpointSecret = 'whsec_afc5aca397d4bbe04b4f4809a49bfc52a6f57330f00caca15c6e5f089d1be934';
 const SECRET_KEY = "your_secret_key";
 
 //password - Bookstore0001
@@ -18,27 +21,29 @@ const SECRET_KEY = "your_secret_key";
 
 //Endpoint to create a payment intent
 app.post("/create-checkout-session", async (req, res) => {
-    const products = req.body.products;
-    
-    const lineItems = products.map((product)=>({
-        price_data:{
-            currency:"inr",
-            product_data:{
-                name:product.bookTitle
+    const { products, userId } = req.body; //Might create problem earlier req.body.products
+    const lineItems = products.map((product) => ({
+        price_data: {
+            currency: "inr",
+            product_data: {
+                name: product.bookTitle
             },
-            unit_amount:product.price * 100,
+            unit_amount: product.price * 100,
         },
-        quantity:product.quantity
+        quantity: product.quantity
     }));
     const session = await stripe.checkout.sessions.create({
-        payment_method_types:["card"],
-        line_items:lineItems,
-        mode:"payment",
-        success_url:"http://localhost:5173/sucess",
-        cancel_url:"http://localhost:5173/cancel"
+        payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: "payment",
+        success_url: "http://localhost:5173/sucess",
+        cancel_url: "http://localhost:5173/cancel",
+        metadata: {
+            userId,
+        }
     });
 
-    res.json({id:session.id})
+    res.json({ id: session.id })
 })
 
 app.get('/', (req, res) => {
@@ -68,6 +73,65 @@ async function run() {
         const userCollection = client.db("BookInventory").collection("users");
         const bookCollections = client.db("BookInventory").collection("books");
         const cartCollection = client.db("BookInventory").collection("cart"); // New collection for the cart
+        const orderCollection = client.db("BookInventory").collection("orders"); // New collection for orders
+
+
+        app.post('/webhook', (req, res) => {
+            const sig = req.headers['stripe-signature'];
+
+            let event;
+
+            try {
+                console.log('Received headers:', req.headers);
+                console.log('Received body:', req.body);
+                event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+                console.log("Webhook verified");
+            } catch (err) {
+                console.log(`⚠️  Webhook signature verification failed.`, err.message);
+                return res.sendStatus(400);
+            }
+
+            if (event.type === 'checkout.session.completed') {
+                const session = event.data.object;
+                handleCheckoutSessionCompleted(session);
+            }
+
+            res.json({ received: true });
+        });
+
+        const handleCheckoutSessionCompleted = async (session) => {
+            const userId = session.metadata.userId;
+            const items = session.display_items.map(item => ({
+                name: item.custom.name,
+                quantity: item.quantity,
+                amount: item.amount_total
+            }));
+            const amount = session.amount_total;
+            const paymentStatus = session.payment_status;
+
+            const order = {
+                userId,
+                sessionId: session.id,
+                items,
+                amount,
+                paymentStatus,
+                createdAt: new Date()
+            };
+
+            await orderCollection.insertOne(order);
+            console.log('Payment successful and order saved!', order);
+        };
+
+        // Fetch all orders (for admin use)
+        app.get('/orders', authenticateToken, async (req, res) => {
+            try {
+                const orders = await orderCollection.find().toArray();
+                res.status(200).json(orders);
+            } catch (error) {
+                res.status(500).json({ message: "Failed to fetch orders", error });
+            }
+        });
+
 
         // Admin Registration route
         app.post('/register', async (req, res) => {
@@ -166,7 +230,7 @@ async function run() {
             res.send(items);
         });
 
-        
+
         app.put("/change-quantity/:id", async (req, res) => {
             const bookId = req.params.id;
             const { quantityChange } = req.body;

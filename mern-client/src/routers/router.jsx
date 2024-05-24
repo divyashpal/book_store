@@ -26,6 +26,7 @@ import UserUpload from "../components/UserUpload";
 
 import AdminSignup from "../components/AdminSignup";
 import AddLogin from "../components/AddLogin";
+import Orders from "../dashboard/Orders";
 
 
 const router = createBrowserRouter([
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
             {
                 path: '/admin/dashboard/manage',
                 element: <ManageBooks />
+            },
+            {
+                path: '/admin/dashboard/orders',
+                element: <Orders/>
             },
             {
                 path: '/admin/dashboard/edit-books/:id',

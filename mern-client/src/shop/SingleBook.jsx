@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 
 const SingleBook = () => {
-  const { _id, bookTitle, imageURL, bookDescription, authorname, category, price } = useLoaderData();
+  const { _id, bookTitle, imageURL, bookDescription, authorname, category, price, quantity } = useLoaderData();
   const [cartItemsCount, setCartItemsCount] = useState(0);
   const [isInCart, setIsInCart] = useState(false);
   const [message, setMessage] = useState('');
@@ -65,6 +65,7 @@ const SingleBook = () => {
           </div>
           <div className='mt-4'>
             <p className='text-xl text-gray-600'>Category - {category}</p>
+            <p className='text-xl text-gray-600'>Available in stock - {quantity}</p>
           </div>
           <button 
             className='bg-blue-700 mt-2 w-full h-15 font-semibold text-white py-2 rounded' 

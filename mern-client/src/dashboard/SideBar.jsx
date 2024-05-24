@@ -25,10 +25,10 @@ const SideBar = () => {
           <Sidebar.Item href="/admin/dashboard/manage" icon={HiInbox}>
             Manage Books
           </Sidebar.Item>
-          {/* <Sidebar.Item href="/login" icon={HiArrowSmRight}>
-            Sign In
+          {/* <Sidebar.Item href="/admin/dashboard/orders" icon={HiArrowSmRight}>
+            Orders
           </Sidebar.Item> */}
-          <Sidebar.Item href="/logout" icon={HiTable}>
+          <Sidebar.Item href="/" icon={HiTable}>
             Log Out
           </Sidebar.Item>
         </Sidebar.ItemGroup>

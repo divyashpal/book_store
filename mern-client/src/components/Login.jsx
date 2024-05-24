@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../contects/AuthProvider'
 import googleLogo from "../assets/google-logo.svg";
+import Swal from 'sweetalert2'
 
 
 const Login = () => {
@@ -22,7 +23,22 @@ const Login = () => {
         login(email, password).then((userCredential) => {
             // Signed in 
             const user = userCredential.user;
-            alert("Login successfull")
+            //alert("Login successfull")
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "success",
+                title: "Logged in successfully"
+              });
             navigate(from, { replace: true })
 
             // ...
@@ -40,7 +56,22 @@ const Login = () => {
     const handleRegister = () => {
         loginwithGoogle().then((result) => {
             const user = result.user;
-            alert("Sign up successfully!!")
+            //alert("Sign up successfully!!")
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.onmouseenter = Swal.stopTimer;
+                  toast.onmouseleave = Swal.resumeTimer;
+                }
+              });
+              Toast.fire({
+                icon: "success",
+                title: "Logged in successfully"
+              });
             navigate(from, { replace: true });
         }).catch((error) => {
             const errorCode = error.code;
