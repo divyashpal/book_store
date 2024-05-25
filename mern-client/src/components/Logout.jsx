@@ -12,8 +12,8 @@ const Logout = () => {
     useEffect(() => {
         // Show SweetAlert when the component mounts
         Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            title: "Are you sure you want to logout?",
+            text: "",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",

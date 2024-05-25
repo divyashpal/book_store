@@ -7,21 +7,21 @@ const MyFooter = () => {
       <div className="w-full px-4 lg:px-24">
         <div className="grid w-full grid-cols-2 gap-8 px-6 py-8 md:grid-cols-4">
           <div>
-            <Footer.Title title="Company" />
+            <Footer.Title title="Chapters & Verse" />
             <Footer.LinkGroup col>
-              <Footer.Link href="#">About</Footer.Link>
-              <Footer.Link href="#">Careers</Footer.Link>
-              <Footer.Link href="#">Brand Center</Footer.Link>
-              <Footer.Link href="#">Blog</Footer.Link>
+              <Footer.Link href="/about">About</Footer.Link>
+              {/* <Footer.Link href="#">Careers</Footer.Link> */}
+              <Footer.Link href="/shop">Shop</Footer.Link>
+              <Footer.Link href="/userupload">Sell Your Book</Footer.Link>
             </Footer.LinkGroup>
           </div>
           <div>
             <Footer.Title title="help center" />
             <Footer.LinkGroup col>
-              <Footer.Link href="#">Discord Server</Footer.Link>
+              {/* <Footer.Link href="#">Discord Server</Footer.Link> */}
               <Footer.Link href="#">Twitter</Footer.Link>
               <Footer.Link href="#">Facebook</Footer.Link>
-              <Footer.Link href="#">Contact Us</Footer.Link>
+              <Footer.Link href="/about">Contact Us</Footer.Link>
             </Footer.LinkGroup>
           </div>
           <div>
@@ -32,7 +32,7 @@ const MyFooter = () => {
               <Footer.Link href="#">Terms &amp; Conditions</Footer.Link>
             </Footer.LinkGroup>
           </div>
-          <div>
+          {/* <div>
             <Footer.Title title="download" />
             <Footer.LinkGroup col>
               <Footer.Link href="#">iOS</Footer.Link>
@@ -40,16 +40,16 @@ const MyFooter = () => {
               <Footer.Link href="#">Windows</Footer.Link>
               <Footer.Link href="#">MacOS</Footer.Link>
             </Footer.LinkGroup>
-          </div>
+          </div> */}
         </div>
         <div className="w-full bg-gray-700 px-4 py-6 sm:flex sm:items-center sm:justify-between">
-          <Footer.Copyright href="#" by="Flowbite™" year={2022} />
+          <Footer.Copyright href="#" by="Chapters & Verse" year={2022} />
           <div className="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">
-            <Footer.Icon href="#" icon={BsFacebook} />
-            <Footer.Icon href="#" icon={BsInstagram} />
-            <Footer.Icon href="#" icon={BsTwitter} />
-            <Footer.Icon href="#" icon={BsGithub} />
-            <Footer.Icon href="#" icon={BsDribbble} />
+            <Footer.Icon href="https://web.facebook.com/login/device-based/regular/login" icon={BsFacebook} />
+            <Footer.Icon href="https://www.instagram.com/accounts/login/?hl=en" icon={BsInstagram} />
+            <Footer.Icon href="https://twitter.com/login" icon={BsTwitter} />
+            <Footer.Icon href="https://github.com/" icon={BsGithub} />
+            {/* <Footer.Icon href="#" icon={BsDribbble} /> */}
           </div>
         </div>
       </div>
