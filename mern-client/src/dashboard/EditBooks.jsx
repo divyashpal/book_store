@@ -5,7 +5,7 @@ import { useLoaderData, useParams } from 'react-router-dom';
 
 const EditBooks = () => {
   const { id } = useParams();
-  const { bookTitle, authorname, imageURL, category, bookDescription, bookPDF, quantity } = useLoaderData();
+  const { bookTitle, authorname, imageURL, category, bookDescription, quantity } = useLoaderData();
 
 
   const bookCategories = [
@@ -50,11 +50,11 @@ const EditBooks = () => {
     const imageURL = form.imageURL.value;
     const category = form.categoryName.value;
     const bookDescription = form.bookDescription.value;
-    const bookPDF = form.bookPDF.value;
+    //const bookPDF = form.bookPDF.value;
     const quantity = form.quantity.value;
 
     const updatebookObj = {
-      bookTitle, authorname, imageURL, category, bookDescription, bookPDF, quantity
+      bookTitle, authorname, imageURL, category, bookDescription, quantity
     }
 
     //console.log(bookObj)
@@ -145,14 +145,14 @@ const EditBooks = () => {
         </div>
 
         {/* book pdf link */}
-        <div>
+        {/* <div>
           <div className="mb-2 block">
             <Label htmlFor="bookPDF" value="Book PDF" />
           </div>
           <TextInput id="bookPDF" type="text"
             name='bookPDF' placeholder="Book PDF URL" required
             defaultValue={bookPDF} />
-        </div>
+        </div> */}
 
         <Button type="submit" className='mt-5'>Update Book</Button>
       </form>

@@ -7,10 +7,19 @@ const Orders = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      
       try {
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('No token found');
+          return;
+        }
+
+        // console.log('Token:',token);
         const response = await axios.get('http://localhost:5000/orders', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}` // Assuming the token is stored in localStorage
+            Authorization: `Bearer ${token}`, // Assuming the token is stored in localStorage
           }
         });
 
@@ -21,7 +30,11 @@ const Orders = () => {
           console.error('Unexpected response format:', response.data);
         }
       } catch (err) {
-        setError('Failed to fetch orders');
+         if (err.response && err.response.status === 403) {
+          setError('Access denied. Please check your credentials.');
+        } else {
+          setError('Failed to fetch orders');
+        }
         console.error('Failed to fetch orders:', err);
       }
     };

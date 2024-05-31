@@ -74,53 +74,77 @@ async function run() {
         const bookCollections = client.db("BookInventory").collection("books");
         const cartCollection = client.db("BookInventory").collection("cart"); // New collection for the cart
         const orderCollection = client.db("BookInventory").collection("orders"); // New collection for orders
+        console.log("Connected to database and collections initialized.");
 
+        // app.post('/webhook', (req, res) => {
+        //     const sig = req.headers['stripe-signature'];
 
-        app.post('/webhook', (req, res) => {
-            const sig = req.headers['stripe-signature'];
+        //     if (!sig) {
+        //         console.log('⚠️  Missing stripe-signature header');
+        //         return res.sendStatus(400);
+        //     }
+        
+        //     console.log('Received webhook event with signature:', sig);
+        
+        //     let event;
 
-            let event;
+        //     try {
 
-            try {
-                console.log('Received headers:', req.headers);
-                console.log('Received body:', req.body);
-                event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-                console.log("Webhook verified");
-            } catch (err) {
-                console.log(`⚠️  Webhook signature verification failed.`, err.message);
-                return res.sendStatus(400);
-            }
+        //         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+        //         console.log("Webhook verified");
+        //         console.log('Received event:', event); // Log the received event
 
-            if (event.type === 'checkout.session.completed') {
-                const session = event.data.object;
-                handleCheckoutSessionCompleted(session);
-            }
+        //         // Handle the event
+        //         switch (event.type) {
+        //             case 'checkout.session.completed':
+        //                 const session = event.data.object;
+        //                 handleCheckoutSessionCompleted(session);
+        //                 break;
+        //             default:
+        //                 console.log(`Unhandled event type ${event.type}`);
+        //         }
 
-            res.json({ received: true });
-        });
+        //     } catch (err) {
+        //         console.log(`⚠️  Webhook signature verification failed.`, err.message);
+        //         return res.sendStatus(400);
+        //     }
+        //     console.log(`Received event type: ${event.type}`);
 
-        const handleCheckoutSessionCompleted = async (session) => {
-            const userId = session.metadata.userId;
-            const items = session.display_items.map(item => ({
-                name: item.custom.name,
-                quantity: item.quantity,
-                amount: item.amount_total
-            }));
-            const amount = session.amount_total;
-            const paymentStatus = session.payment_status;
+        //     if (event.type === 'checkout.session.completed') {
+        //         const session = event.data.object;
+        //         handleCheckoutSessionCompleted(session);
+        //     }
 
-            const order = {
-                userId,
-                sessionId: session.id,
-                items,
-                amount,
-                paymentStatus,
-                createdAt: new Date()
-            };
+        //     res.json({ received: true });
+        // });
 
-            await orderCollection.insertOne(order);
-            console.log('Payment successful and order saved!', order);
-        };
+        // const handleCheckoutSessionCompleted = async (session) => {
+        //     const userId = session.metadata.userId;
+        //     const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
+        //     const items = session.display_items.map(item => ({
+        //         name: item.custom.name,
+        //         quantity: item.quantity,
+        //         amount: item.amount_total / 100
+        //     }));
+        //     const amount = session.amount_total;
+        //     const paymentStatus = session.payment_status;
+
+        //     const order = {
+        //         userId,
+        //         sessionId: session.id,
+        //         items,
+        //         amount,
+        //         paymentStatus,
+        //         createdAt: new Date()
+        //     };
+
+        //     try {
+        //         await orderCollection.insertOne(order);
+        //         console.log('Payment successful and order saved!', order);
+        //     } catch (error) {
+        //         console.error("Failed to save order:", error);
+        //     }
+        // };
 
         // Fetch all orders (for admin use)
         app.get('/orders', authenticateToken, async (req, res) => {
@@ -179,7 +203,14 @@ async function run() {
 
         // Middleware to protect routes
         function authenticateToken(req, res, next) {
-            const token = req.headers['authorization'];
+
+            const authHeader = req.headers['authorization'];
+
+            if (!authHeader) {
+                return res.status(401).json({ message: "Access token required" });
+            }
+
+            const token = authHeader.split(' ')[1];
 
             if (!token) {
                 return res.status(401).json({ message: "Access token required" });
@@ -336,7 +367,10 @@ async function run() {
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
+    }catch (error) {
+        console.error("Failed to connect to MongoDB", error);
+    }
+     finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
     }

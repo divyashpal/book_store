@@ -10,13 +10,22 @@ import { AuthContext } from '../contects/AuthProvider';
 const Navbar = () => {
     const [isMenuOpen, setisMenuOpen] = useState(false);
     const [isSticky, setisSticky] = useState(false);
-    
     const {user} = useContext(AuthContext);
     console.log(user) 
 
     // toggle menu
     const toggleMenu = () => {
         setisMenuOpen(!isMenuOpen);
+    }
+
+    // Handle logout
+    const handleLogout = () => {
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            console.log("User signed out");
+        }).catch((error) => {
+            console.error("Sign out error", error);
+        });
     }
 
     useEffect(() => {
@@ -52,12 +61,7 @@ const Navbar = () => {
         {
             link: "Admin", path: "/adminlogin"
         },
-        {
-            link: "login", path:"login"
-        },
-        {
-            link: "logout", path:"logout"
-        }
+        ...(user ? [{ link: "Logout", path: "/logout", onClick: handleLogout }] : [])
     ]
     return (
         <header className='w-full bg-transparent fixed top-0 left-0 right-0 transition-all ease-in duration-300'>
@@ -94,7 +98,7 @@ const Navbar = () => {
                 {/* nav items for sm device */}
                 <div className={`space-y-4 px-4 mt-16 py-7 bg-blue-700 ${isMenuOpen? "blog fixed top-0 right-0 left-0" : "hidden"}`}>
                     {
-                    navItems.map(({ link, path }) => <Link key={path} to={path} className='block text-base text-white uppercase cursor-pointer'>{link}</Link>)
+                    navItems.map(({ link, path, onClick}) => <Link key={path} to={path} onClick={onClick ? (e) => { e.preventDefault(); onClick(); } : null} className='block text-base text-white uppercase cursor-pointer'>{link}</Link>)
                     }
                 </div>
             </nav>

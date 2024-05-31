@@ -25,11 +25,16 @@ const UserUpload = () => {
   ]
 
   const [selectedBookCategory, setselectedBookCategory] = useState(bookCategories[0]);
+  const [bookQuantity, setBookQuantity] = useState(0);
 
   const handleChangeSelectedValue = (event) => {
     // console.log(event.target.value);
     setselectedBookCategory(event.target.value)
   }
+
+  const handleQuantityChange = (event) => {
+    setBookQuantity(event.target.value);
+  };
 
 
   //handle book submision
@@ -41,11 +46,11 @@ const UserUpload = () => {
     const imageURL = form.imageURL.value;
     const category = form.categoryName.value;
     const bookDescription = form.bookDescription.value;
-    const bookPDF = form.bookPDF.value;
     const price = form.price.value;
+    const quantity = form.quantity.value;
 
     const bookObj = {
-      bookTitle, authorname, imageURL, category, bookDescription, bookPDF, price
+      bookTitle, authorname, imageURL, category, bookDescription, price, quantity
     }
 
     console.log(bookObj)
@@ -116,6 +121,17 @@ const UserUpload = () => {
           </div>
         </div>
 
+        {/* third row */}
+        <div className='flex gap-8'>
+          {/* Quantity */}
+          <div className='lg:w-1/2'>
+            <div className="mb-2 block">
+              <Label htmlFor="quantity" value="Quantity" />
+            </div>
+            <TextInput id="quantity" name="quantity" type="number" placeholder="Quantity" required defaultValue={bookQuantity} onChange={handleQuantityChange} />
+          </div>
+        </div>
+
         {/* bookDescription */}
         <div>
           <div className="mb-2 block">
@@ -125,15 +141,15 @@ const UserUpload = () => {
         </div>
 
         {/* book pdf link */}
-        <div>
+        {/* <div>
           <div className="mb-2 block">
             <Label htmlFor="bookPDF" value="Book PDF" />
           </div>
           <TextInput id="bookPDF" type="text"
-            name='bookPDF' placeholder="Book PDF URL" required />
-        </div>
+            name='bookPDF' placeholder="Book PDF URL" />
+        </div> */}
 
-        {/* book pdf link */}
+        {/* book price */}
         <div>
           <div className="mb-2 block">
             <Label htmlFor="price" value="Price" />
