@@ -1,5 +1,6 @@
 # Chapters & Verse - online bookstore
 This is an online book, where users can explore various books and purchase them.
+
                                                     HOME PAGE
 
 ![home page](https://github.com/divyashpal/book_store/assets/113034496/08e3bc16-d308-42f7-9729-0e343e0012c4)
