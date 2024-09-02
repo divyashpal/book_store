@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 5000;
 const cors = require('cors')
-const stripe = require("stripe")("sk_test_51Ox301SJZ7HGVRik2prd19IDLE7lgiFrb8rzJl6Sqe1o6ipMeypIUaLjnlNzYSd1ZgGJRSB52ly3FCea0eSgwuns005pewmhzK")
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
@@ -13,8 +15,8 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.raw({ type: 'application/json' }));
 
-const endpointSecret = 'whsec_afc5aca397d4bbe04b4f4809a49bfc52a6f57330f00caca15c6e5f089d1be934';
-const SECRET_KEY = "your_secret_key";
+const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
+const SECRET_KEY = process.env.SECRET_KEY;
 
 //password - Bookstore0001
 
