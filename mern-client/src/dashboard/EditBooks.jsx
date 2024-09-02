@@ -59,7 +59,7 @@ const EditBooks = () => {
 
     //console.log(bookObj)
     //update book data
-    fetch(`http://localhost:5000/book/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/book/${id}`, {
       method: 'PATCH',
       headers: {
         "Content-type": "application/json"

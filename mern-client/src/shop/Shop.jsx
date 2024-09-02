@@ -8,7 +8,7 @@ const Shop = () => {
 
 
   useEffect(() => {
-    fetch("http://localhost:5000/all-books").then(res => res.json()).then(data => setBooks(data));
+    fetch(`${process.env.REACT_APP_API_URL}/all-books`).then(res => res.json()).then(data => setBooks(data));
   }, [])
 
   // useEffect(() => {

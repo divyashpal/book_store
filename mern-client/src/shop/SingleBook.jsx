@@ -12,7 +12,7 @@ const SingleBook = () => {
 
   useEffect(() => {
     // Fetch the number of items in the cart when the component mounts
-    fetch("http://localhost:5000/cart")
+    fetch(`${process.env.REACT_APP_API_URL}/cart`)
       .then(res => res.json())
       .then(data => setCartItemsCount(data.length))
       .catch(error => console.error("Error fetching cart items:", error));

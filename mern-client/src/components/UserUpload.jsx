@@ -56,7 +56,7 @@ const UserUpload = () => {
     console.log(bookObj)
 
     //send data to db
-    fetch('http://localhost:5000/upload-book', {
+    fetch(`${process.env.REACT_APP_API_URL}/upload-book`, {
       method: 'POST',
       headers: {
         "Content-type": "application/json"

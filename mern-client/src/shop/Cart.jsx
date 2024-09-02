@@ -13,7 +13,7 @@ const Cart = () => {
 
 
     useEffect(() => {
-        fetch("http://localhost:5000/cart")
+        fetch(`${process.env.REACT_APP_API_URL}/cart`)
             .then(res => res.json())
             .then(data => {
                 setCartItems(data);
@@ -50,7 +50,7 @@ const Cart = () => {
     // };
 
     const removeFromCart = (bookId) => {
-        fetch(`http://localhost:5000/remove-from-cart/${bookId}`, {
+        fetch(`${process.env.REACT_APP_API_URL}/remove-from-cart/${bookId}`, {
             method: 'DELETE',
         })
             .then(res => res.json())
@@ -98,7 +98,7 @@ const Cart = () => {
     // };
 
     const handleQuantityChange = (bookId, quantityChange) => {
-        fetch(`http://localhost:5000/change-quantity/${bookId}`, {
+        fetch(`${process.env.REACT_APP_API_URL}/change-quantity/${bookId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ const Cart = () => {
 
     //payment integration
     const makePayment = async () => {
-        const stripe = await loadStripe("pk_test_51Ox301SJZ7HGVRiknhcApObzraBoN4hcvmr1tmJPc7ESZswzeScc9T0HAXKUL0HknRzPBEETgSmkh6KEV87FM1bh00UKzAxUQf");
+        const stripe = await loadStripe(process.env.STRIPE_SECRECT_KEY);
 
         const body = {
             products: cartItems
@@ -146,7 +146,7 @@ const Cart = () => {
         const headers = {
             "Content-Type": "application/json"
         }
-        const response = await fetch("http://localhost:5000/create-checkout-session",{
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/create-checkout-session`,{
             method:"POST",
             headers:headers,
             body:JSON.stringify(body)

@@ -78,77 +78,7 @@ async function run() {
         const orderCollection = client.db("BookInventory").collection("orders"); // New collection for orders
         console.log("Connected to database and collections initialized.");
 
-        // app.post('/webhook', (req, res) => {
-        //     const sig = req.headers['stripe-signature'];
-
-        //     if (!sig) {
-        //         console.log('⚠️  Missing stripe-signature header');
-        //         return res.sendStatus(400);
-        //     }
         
-        //     console.log('Received webhook event with signature:', sig);
-        
-        //     let event;
-
-        //     try {
-
-        //         event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-        //         console.log("Webhook verified");
-        //         console.log('Received event:', event); // Log the received event
-
-        //         // Handle the event
-        //         switch (event.type) {
-        //             case 'checkout.session.completed':
-        //                 const session = event.data.object;
-        //                 handleCheckoutSessionCompleted(session);
-        //                 break;
-        //             default:
-        //                 console.log(`Unhandled event type ${event.type}`);
-        //         }
-
-        //     } catch (err) {
-        //         console.log(`⚠️  Webhook signature verification failed.`, err.message);
-        //         return res.sendStatus(400);
-        //     }
-        //     console.log(`Received event type: ${event.type}`);
-
-        //     if (event.type === 'checkout.session.completed') {
-        //         const session = event.data.object;
-        //         handleCheckoutSessionCompleted(session);
-        //     }
-
-        //     res.json({ received: true });
-        // });
-
-        // const handleCheckoutSessionCompleted = async (session) => {
-        //     const userId = session.metadata.userId;
-        //     const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
-        //     const items = session.display_items.map(item => ({
-        //         name: item.custom.name,
-        //         quantity: item.quantity,
-        //         amount: item.amount_total / 100
-        //     }));
-        //     const amount = session.amount_total;
-        //     const paymentStatus = session.payment_status;
-
-        //     const order = {
-        //         userId,
-        //         sessionId: session.id,
-        //         items,
-        //         amount,
-        //         paymentStatus,
-        //         createdAt: new Date()
-        //     };
-
-        //     try {
-        //         await orderCollection.insertOne(order);
-        //         console.log('Payment successful and order saved!', order);
-        //     } catch (error) {
-        //         console.error("Failed to save order:", error);
-        //     }
-        // };
-
-        // Fetch all orders (for admin use)
         app.get('/orders', authenticateToken, async (req, res) => {
             try {
                 const orders = await orderCollection.find().toArray();
@@ -314,12 +244,7 @@ async function run() {
             res.json({ message: "Book removed from cart" });
         });
 
-        //get all books from database
-        // app.get("/all-books", async (req, res) => {
-        //     const books = bookCollections.find();
-        //     const result = await books.toArray();
-        //     res.send(result);
-        // })
+      
 
         //update a book data : path or update methods
         app.patch("/book/:id", async (req, res) => {
